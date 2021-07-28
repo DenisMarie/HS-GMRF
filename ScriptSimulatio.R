@@ -1,7 +1,7 @@
 # R source code
 
 # script for simulating data with \Sigma_g = \Sigma_{g,half}, \rho = 0.9, and
-# setting \beta_g=(5, 5/sqrt(10), ..., 5/sqrt(10))
+# setting \beta_g=(5, 5/sqrt(10), ..., 5/sqrt(10)) and performing HS-GMRF
 library(mvtnorm)
 library(coda)
 library(invgamma)
@@ -62,24 +62,3 @@ ci_gmrf <- t(apply(res.gmrf$beta_store[-(1:nburn),], 2, function(c) HPDinterval(
 sel_gmrf <- which(apply(sign(ci_gmrf), 1, prod) == 1)
 output(beta_true, sel_gmrf)
 MSE(beta_true, beta_hat)
-
-plot(beta_true, t = "l")
-lines(beta_hat, col =2)
-# to compare with HS
-res.hs <- bayesreg(Y ~ X,
-               data = data.frame(X, Y),
-               n.samples =  niter, prior = "hs")
-beta_hs <- rowMeans(res.hs$beta[, -(1:nburn)])
-ci_hs <- t(apply(res.hs$beta[, -(1:nburn)], 1, function(c) HPDinterval(as.mcmc(c), probs = 0.95)))
-sel_hs <- which(apply(sign(ci_hs), 1, prod) == 1)
-output(beta_true, sel_hs)
-MSE(beta_true, beta_hs)
-
-lines(beta_hs, col =3)
-
-# Fused Lasso  ------------------------------------------------------------
-
-out <- fusedlasso1d(y = Y, X = X)
-plot(out, style = "path")
-plot(coef(out, lambda=sqrt(n*log(p)))$beta, t = "l")
-lines(beta_true, col=2)
