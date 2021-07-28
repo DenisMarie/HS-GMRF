@@ -1,5 +1,4 @@
-# R source code
-# Main function for performing HS-GMRF model
+# R source code for HS-GMRF model
 
 # Arguments to input:
 # - Y = vector of observations (n x 1)
